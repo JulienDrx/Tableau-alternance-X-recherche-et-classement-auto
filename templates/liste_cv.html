@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des CV</title>
+</head>
+<body>
+    <h1>CV enregistrés</h1>
+    <ul>
+        {% for fichier in fichiers %}
+        <li>
+            <a href="{{ url_for('gestion.get_cv', filename=fichier) }}" target="_blank">
+                {{ fichier }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    <form action="{{ url_for('gestion.tableau') }}">
+        <button type="submit">Retour au tableau</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,6 @@
+PyMuPDF
+Flask==3.1.1
+python-dotenv==1.1.0
+python_docx==1.2.0
+requests==2.32.4
+Werkzeug==3.1.3

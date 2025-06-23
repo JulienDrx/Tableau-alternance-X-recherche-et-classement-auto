@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifier une candidature</title>
+</head>
+<body>
+    <h1>Modifier la candidature</h1>
+    <form method="post">
+        <input type="text" name="entreprise" value="{{ ligne[1] }}"><br>
+        <input type="url" name="url" value="{{ ligne[2] }}"><br>
+        <input type="text" name="nom_fichier" value="{{ ligne[3] }}"><br>
+        <input type="date" name="date_candidature" value="{{ ligne[4] }}"><br>
+        <input type="text" name="retour_oui_ou_non" value="{{ ligne[5] }}"><br>
+        <input type="date" name="date_de_retour" value="{{ ligne[6] }}"><br>
+        <textarea name="commentaire">{{ ligne[7] }}</textarea><br>
+        <button type="submit">Sauvegarder</button>
+    </form>
+</body>
+</html>

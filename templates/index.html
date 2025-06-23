@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Recherche</title>
+</head>
+<body>
+    <h1>Recherche d'alternance</h1>
+
+<form id="search-form">
+    <label for="query">Votre recherche :</label>
+    <input type="text" id="query" name="query" required>
+
+    <label for="cv">Sélectionnez votre CV :</label>
+    <select id="cv" name="cv">
+        <option value ="">-- Choisissez un CV(facultatif --</option>
+        {% for fichier in fichiers_cv %}
+            <option value="{{ fichier }}">{{ fichier }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Rechercher</button>
+</form>
+
+    </form>
+
+    <form action="{{ url_for('gestion.tableau') }}">
+        <button type="submit">Aller au tableau de suivi</button>
+    </form>
+
+    <div id="results"></div>
+
+    <script>
+        document.getElementById('search-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const query = document.querySelector('#query').value;
+            fetch(`/search?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsDiv = document.querySelector('#results');
+                    resultsDiv.innerHTML = '';
+                    if (data.error) {
+                        resultsDiv.innerHTML = `<p>${data.error}</p>`;
+                    } else {
+                        data.forEach((item, index) => {
+                            resultsDiv.innerHTML += `
+                                <div>
+                                    <h2><a href="${item.link}" target="_blank">${item.title}</a></h2>
+                                    <p>${item.description}</p>
+                                    <button onclick="analyserOffre(${index}, \`${item.description.replace(/`/g, "\\`")}\`)">
+                                        Analyser avec Mistral
+                                    </button>
+                                    <p id="score-${index}"></p>
+                                </div>
+                                <hr>
+                            `;
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur fetch:', error);
+                });
+        });
+
+function analyserOffre(index, description) {
+    const cvSelect = document.querySelector("#cv");
+    const cv = cvSelect ? cvSelect.value : "";
+
+    fetch("/score_offre", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ link: item.link, cv })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const scoreElement = document.getElementById(`score-${index}`);
+        if (data.score !== undefined) {
+            scoreElement.innerText = `Score Mistral : ${data.score}/10`;
+        } else {
+            scoreElement.innerText = "Erreur scoring";
+        }
+    })
+    .catch(error => {
+        console.error("Erreur :", error);
+        document.getElementById(`score-${index}`).innerText = "Erreur réseau";
+    });
+}
+
+
+
+    </script>
+</body>
+</html>

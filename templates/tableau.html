@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Tableau de suivi</title>
+</head>
+
+<body>
+    <h1>Tableau de suivi des candidatures</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul>
+        {% for category, message in messages %}
+            <li style="color: {% if category == 'error' %}red{% else %}green{% endif %};">
+                {{ message }}
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('recherche.index') }}">
+        <button type="submit">Revenir à la recherche</button>
+    </form>
+
+    <p>
+        <a href="{{ url_for('gestion.liste_cv') }}">📂 Voir les CV enregistrés</a>
+    </p>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Entreprise</th>
+                <th>URL</th>
+                <th>Fichier</th>
+                <th>Date candidature</th>
+                <th>Retour</th>
+                <th>Date retour</th>
+                <th>Commentaire</th>
+                <th>Modifier</th>
+                <th>Supprimer</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ligne in tableau %}
+            <tr>
+                <td>{{ ligne[1] }}</td>
+                <td><a href="{{ ligne[2] }}" target="_blank">Lien</a></td>
+                <td>{{ ligne[3] }}</td>
+                <td>{{ ligne[4] }}</td>
+                <td>{{ ligne[5] }}</td>
+                <td>{{ ligne[6] }}</td>
+                <td>{{ ligne[7] }}</td>
+                <td><a href="{{ url_for('gestion.modifier', id=ligne[0]) }}">Modifier</a></td>
+                <td>
+                    <form action="{{ url_for('gestion.supprimer', id=ligne[0]) }}" method="post" style="display:inline;">
+                        <button type="submit" onclick="return confirm('Confirmer la suppression ?')">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Importer votre CV</h2>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".pdf,.doc,.docx" required>
+        <button type="submit">Importer votre CV</button>
+    </form>
+
+    <p id="upload-message" style="color: green;"></p>
+
+    <h2>Ajouter une candidature</h2>
+    <form method="post" action="{{ url_for('gestion.tableau') }}">
+        <input type="text" name="entreprise" placeholder="Entreprise" required><br>
+        <input type="url" name="url" placeholder="Lien de l'offre" required><br>
+        <input type="text" name="nom_fichier" placeholder="Nom fichier CV"><br>
+        <input type="date" name="date_candidature"><br>
+        <input type="text" name="retour_oui_ou_non" placeholder="Retour ? (oui/non)"><br>
+        <input type="date" name="date_de_retour"><br>
+        <textarea name="commentaire" placeholder="Commentaire"></textarea><br>
+        <button type="submit">Ajouter</button>
+    </form>
+
+    <!-- ✅ Ton script JS doit être ici -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("upload-form");
+        if (form) {
+            form.addEventListener("submit", function(event) {
+                event.preventDefault();
+
+                const formData = new FormData(this);
+                fetch("{{ url_for('gestion.upload_cv') }}", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const msg = document.getElementById("upload-message");
+                    if (data.message) {
+                        msg.textContent = "✅ Fichier importé avec succès : " + data.filename;
+                        msg.style.color = "green";
+                    } else if (data.erreur) {
+                        msg.textContent = "❌ " + data.erreur;
+                        msg.style.color = "red";
+                    }
+                })
+                .catch(error => {
+                    const msg = document.getElementById("upload-message");
+                    msg.textContent = "❌ Erreur réseau : " + error;
+                    msg.style.color = "red";
+                });
+            });
+        }
+    });
+    </script>
+</body>
+</html>
