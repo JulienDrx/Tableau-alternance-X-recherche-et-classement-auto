@@ -85,36 +85,40 @@
 
     <!-- ✅ Ton script JS doit être ici -->
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const form = document.getElementById("upload-form");
-        if (form) {
-            form.addEventListener("submit", function(event) {
-                event.preventDefault();
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("upload-form");
+    if (form) {
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
 
-                const formData = new FormData(this);
-                fetch("{{ url_for('gestion.upload_cv') }}", {
-                    method: "POST",
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const msg = document.getElementById("upload-message");
-                    if (data.message) {
-                        msg.textContent = "✅ Fichier importé avec succès : " + data.filename;
-                        msg.style.color = "green";
-                    } else if (data.erreur) {
-                        msg.textContent = "❌ " + data.erreur;
-                        msg.style.color = "red";
-                    }
-                })
-                .catch(error => {
-                    const msg = document.getElementById("upload-message");
-                    msg.textContent = "❌ Erreur réseau : " + error;
+            const formData = new FormData(this);
+            fetch("{{ url_for('gestion.upload_cv') }}", {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const msg = document.getElementById("upload-message");
+                if (data.message) {
+                    msg.textContent = "✅ Fichier importé avec succès : " + data.filename;
+                    msg.style.color = "green";
+                } else if (data.erreur) {
+                    msg.textContent = "❌ " + data.erreur;
                     msg.style.color = "red";
-                });
+                }
+            })
+            .catch(error => {
+                const msg = document.getElementById("upload-message");
+                msg.textContent = "❌ Erreur réseau : " + error;
+                msg.style.color = "red";
             });
-        }
-    });
-    </script>
+        });
+    }
+});
+</script>
+
 </body>
 </html>

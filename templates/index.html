@@ -47,7 +47,7 @@
                                 <div>
                                     <h2><a href="${item.link}" target="_blank">${item.title}</a></h2>
                                     <p>${item.description}</p>
-                                    <button onclick="analyserOffre(${index}, \`${item.description.replace(/`/g, "\\`")}\`)">
+                                    <button onclick="analyserOffre(${index}, \`${item.description.replace(/`/g, "\\`")}\`, \`${item.link}\`)">
                                         Analyser avec Mistral
                                     </button>
                                     <p id="score-${index}"></p>
@@ -62,14 +62,16 @@
                 });
         });
 
-function analyserOffre(index, description) {
+function analyserOffre(index, description, link) {
     const cvSelect = document.querySelector("#cv");
     const cv = cvSelect ? cvSelect.value : "";
 
     fetch("/score_offre", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ link: item.link, cv })
+        headers: { "Content-Type": "application/json",
+            "X-Requested-With" : "XMLHttpRequest"
+         },
+        body: JSON.stringify({ link: link, cv })
     })
     .then(res => res.json())
     .then(data => {
@@ -85,6 +87,7 @@ function analyserOffre(index, description) {
         document.getElementById(`score-${index}`).innerText = "Erreur réseau";
     });
 }
+
 
 
 

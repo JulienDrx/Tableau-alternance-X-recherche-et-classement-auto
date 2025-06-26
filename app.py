@@ -10,6 +10,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def create_app():
     app = Flask(__name__)
+    app.secret_key = os.getenv("FLASk_SECRET_KEY", "dev-key")
     app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER 
     from recherche.routes import recherche_bp
     from gestion.routes import gestion_bp

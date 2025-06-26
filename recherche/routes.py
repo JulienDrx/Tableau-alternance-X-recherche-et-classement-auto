@@ -123,6 +123,7 @@ def search():
 @recherche_bp.route("/score_offre", methods=["POST"])
 def score_offre():
     data = request.json
+    print("[SCORE] Données reçues :", data)
     link = data.get("link", "")
     cv_name = data.get("cv", "")
 
@@ -160,11 +161,11 @@ def fetch_cv_text(cv_url):
         return text
     return ""
 
-def scorer_offre(description, profil, api_key):
+def scorer_offre(description, profil, MISTRAL_API_KEY):
     prompt = f"Voici une offre : {description}\nCe profil : {profil}\nNote sur 10 ?"
 
     headers = {
-        "Authorization": f"Bearer {api_key}",
+        "Authorization": f"Bearer {MISTRAL_API_KEY}",
         "Content-Type": "application/json"
     }
 

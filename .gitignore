@@ -1,2 +1,6 @@
-.env
+*.env
 db_config.txt
+uploads/
+_pycache_/
+recherche/_pycache_/
+gestion/_pycache_

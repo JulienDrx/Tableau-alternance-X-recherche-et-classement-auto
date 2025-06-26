@@ -103,9 +103,11 @@ def upload_cv():
         filename = secure_filename(file.filename)
         filepath = os.path.join(current_app.config["UPLOAD_FOLDER"], filename)
         file.save(filepath)
-        flash(f"Fichier '{filename}' bien reçu ✅", "success")
-        return redirect(url_for("gestion.tableau"))
-
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify({"message": "CV importé", "filename": filename})
+        else:
+            flash(f"Fichier '{filename}' bien reçu ✅", "success")
+            return redirect(url_for("gestion.tableau"))
     flash("Type de fichier non autorisé", "error")
     return redirect(url_for("gestion.tableau"))
 
