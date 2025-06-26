@@ -8,7 +8,7 @@ import fitz
 from io import BytesIO
 from urllib.parse import quote
 from bs4 import BeautifulSoup
-from .scraping import extraire_texte_depuis_url
+from .scraping import extraire_texte_depuis_url, extraire_liens_offres_depuis_page_liste
 
 load_dotenv()
 
@@ -35,15 +35,14 @@ def index():
 def google_search(search_query, api_key, search_engine_id, exclude_sites=None, start=1, **kwargs):
     url = "https://www.googleapis.com/customsearch/v1"
 
-    exclude_sites_query = ""
-    if exclude_sites:
-        exclude_sites_query = " -site:".join(exclude_sites)
-        search_query += f" -site:{exclude_sites_query}"
+    # Toujours inclure le mot-clé "alternance" dans la requête
+    if "alternance" not in search_query.lower():
+        search_query = f"alternance {search_query}"
 
-    job_boards = ["site:indeed.fr", "site:monster.fr", "site:welcometothejungle.com"]
-    job_boards_query = " OR ".join(job_boards)
-    search_query = f"{search_query} ({job_boards_query})"
-    search_query += "+Lille"
+    # Ajouter exclusions (écoles, etc.)
+    if exclude_sites:
+        exclude_sites_query = " -site:" + " -site:".join(exclude_sites)
+        search_query += exclude_sites_query
 
     params = {
         'q': search_query,
@@ -57,8 +56,11 @@ def google_search(search_query, api_key, search_engine_id, exclude_sites=None, s
     if response.status_code == 200:
         return response.json()
     else:
-        print(f"Erreur lors de la requête : {response.status_code}")
+        print(f"Erreur lors de la requête Google Search : {response.status_code}")
         return None
+
+
+
 
 def extraire_texte_depuis_url(url):
     try:
@@ -110,14 +112,32 @@ def search():
     if all_results:
         formatted_results = []
         for item in all_results:
-            formatted_results.append({
-                "title": item['title'],
-                "link": item['link'],
-                "description": item['snippet']
-            })
+            lien = item['link']
+            titre = item['title']
+            desc = item['snippet']
+
+            if any(domain in lien for domain in ["welcometothejungle.com", "indeed.fr/emplois"]):
+                sous_liens = extraire_liens_offres_depuis_page_liste(lien)
+                print(f"[INFO] {len(sous_liens)} sous-liens extraits depuis {lien}")
+                for sous_lien in sous_liens:
+                    formatted_results.append({
+                        "title": f"(extrait de {titre})",
+                        "link": sous_lien,
+                        "description": "Offre extraite automatiquement"
+                    })
+            else:
+                formatted_results.append({
+                    "title": titre,
+                    "link": lien,
+                    "description": desc
+                })
+
         return jsonify(formatted_results)
+
     else:
         return jsonify({"error": "No results found"}), 404
+
+    
 
 
 @recherche_bp.route("/score_offre", methods=["POST"])
@@ -141,7 +161,7 @@ def score_offre():
         return jsonify({"error": "CV introuvable ou vide"}), 400
 
     score = scorer_offre(description, profil_utilisateur, mistral_api_key)
-    return jsonify({"score": score})
+    return jsonify({"score": score, "explication": "explication"})
 
 def fetch_cv_text(cv_url):
     response = requests.get(cv_url)
@@ -183,7 +203,8 @@ def scorer_offre(description, profil, MISTRAL_API_KEY):
     if response.status_code == 200:
         output = response.json()["choices"][0]["message"]["content"]
         match = re.search(r"(\d+(?:[.,]\d*)?)", output)
-        return float(match.group(1).replace(',', '.')) if match else 0.0
+        score = float(match.group(1).replace(',', '.')) if match else 0.0
+        return score, output        
     else:
         print("Erreur Mistral:", response.text)
         return 0.0

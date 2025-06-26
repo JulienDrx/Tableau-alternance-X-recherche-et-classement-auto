@@ -4,3 +4,4 @@ uploads/
 _pycache_/
 recherche/_pycache_/
 gestion/_pycache_
+recherche/scrapingtest.py
