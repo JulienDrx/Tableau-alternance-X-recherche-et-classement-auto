@@ -1,81 +1,102 @@
+# 🔍 Tableau Alternance — Recherche & Scoring Automatique
 
-# 🧠 Tableau alternance X recherche et classement auto
-
-Ce projet est une application web en Flask qui combine :
-- 📊 un **tableau de suivi des candidatures**
-- 🔍 une **recherche automatique d'offres d'alternance** via l'API Google Custom Search
-- 🤖 un **scoring intelligent** des offres grâce à l'API **Mistral AI**
-- 📂 une **gestion des CV** avec envoi, stockage et utilisation dans l'analyse
-
-## 🚀 Fonctionnalités principales
-
-- Ajouter / modifier / supprimer des candidatures via un tableau clair
-- Rechercher automatiquement des offres en ligne
-- Envoyer son CV (PDF ou DOCX) et l'utiliser pour scorer chaque offre
-- Obtenir un score personnalisé par l'IA Mistral en fonction de votre profil
-- Visualiser et télécharger les CV enregistrés
-
-## 🔧 Technologies utilisées
-
-- Python 3.11+
-- Flask (avec Blueprints)
-- SQLite (base de données simple intégrée)
-- HTML / CSS / JS Vanilla
-- API Google Custom Search
-- API Mistral (mistral-small / mistral-tiny)
-- BeautifulSoup pour le scraping des annonces
-
-## 📁 Structure du projet
-
-```
-.
-├── app.py                  # Point d'entrée principal
-├── gestion/                # Module pour la gestion des candidatures et CV
-├── recherche/              # Module pour la recherche d'offres + scoring
-├── templates/              # Fichiers HTML (Jinja)
-├── uploads/                # CV uploadés
-└── creer_bdd.py            # Script de création initiale de la BDD
-```
-
-## ⚙️ Lancer l’application
-
-1. Cloner le repo :
-```bash
-git clone https://github.com/JulienDrx/Tableau-alternance-X-recherche-et-classement-auto
-cd Tableau-alternance-X-recherche-et-classement-auto
-```
-
-2. Installer les dépendances :
-```bash
-pip install -r requirements.txt
-```
-
-3. Lancer l’app :
-```bash
-python app.py
-```
-
-4. Accéder à l’app :
-```
-http://localhost:5000
-```
-
-## 🔑 Clés API nécessaires
-
-Créer un fichier `.env` contenant :
-
-```
-GOOGLE_API_KEY=...
-GOOGLE_CX_ID=...
-MISTRAL_API_KEY=...
-```
-
-## 📌 À venir (TODO)
-
-- Pagination des résultats Google
-- Gestion multi-CV dans l’analyse Mistral
-- Déploiement sur Render / Railway
+Une application Flask pour rechercher des offres d'alternance, les analyser avec Mistral AI, importer des CV, et suivre vos candidatures dans un tableau interactif.
 
 ---
 
-💡 Développé avec passion par [@JulienDrx](https://github.com/JulienDrx)
+## 🚀 Fonctionnalités
+
+- 🔎 Recherche d’offres d’alternance via **Google Custom Search API**
+- 🧠 Analyse des offres avec **Mistral AI** (note /10 + explication)
+- 📄 Import et sélection de **CV personnalisés** pour le scoring
+- 📊 Suivi des candidatures dans un **tableau interactif**
+- 🧹 Interface HTML avec **CSS personnalisée** et formulaire intuitif
+- 🔗 Gestion des liens d’offres extraites depuis des pages listes (Indeed, WTTJ...)
+
+---
+
+## 📦 Technologies
+
+- Python 3 + Flask
+- HTML / CSS
+- SQLite
+- Google Custom Search API
+- Mistral Chat API
+- BeautifulSoup (scraping HTML)
+- Requests
+
+---
+
+## 🧪 Configuration requise
+
+- Python 3.10 ou supérieur
+- Un fichier `.env` contenant vos clés :
+
+```env
+api_key=VOTRE_GOOGLE_API_KEY
+search_engine_id=VOTRE_CSE_ID
+MISTRAL_API_KEY=VOTRE_MISTRAL_KEY
+FLASK_SECRET_KEY=cle-secrete
+```
+
+---
+
+## ▶️ Lancer le projet
+
+```bash
+# (Optionnel) Créer un environnement virtuel
+python -m venv venv
+source venv/bin/activate  # ou .\venv\Scripts\activate sous Windows
+
+# Installer les dépendances
+pip install -r requirements.txt
+
+# Lancer l'application Flask
+python app.py
+```
+
+---
+
+## 🗂 Arborescence du projet
+
+```
+.
+├── app.py
+├── creer_bdd.py
+├── .env
+├── .gitignore
+├── requirements.txt
+├── templates/
+│   ├── index.html
+│   ├── tableau.html
+│   ├── modifier.html
+│   └── liste_cv.html
+├── static/
+│   └── style.css
+├── gestion/
+│   └── routes.py
+├── recherche/
+│   ├── routes.py
+│   └── scraping.py
+```
+
+---
+
+## 📝 Améliorations possibles
+
+- Tri des offres par score Mistral
+- Intégration Bootstrap ou Tailwind pour un style pro
+- Historique des analyses ou versionnage des candidatures
+- Export CSV des candidatures
+
+---
+
+## 🤝 Contribuer
+
+N'hésitez pas à forker ce projet, proposer une pull request ou poser une question !
+
+---
+
+## 📜 Licence
+
+Projet personnel à visée pédagogique.
