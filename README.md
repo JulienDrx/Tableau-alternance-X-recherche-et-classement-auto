@@ -1,102 +1,97 @@
-# 🔍 Tableau Alternance — Recherche & Scoring Automatique
+# 🧠 Candidature Assist
 
-Une application Flask pour rechercher des offres d'alternance, les analyser avec Mistral AI, importer des CV, et suivre vos candidatures dans un tableau interactif.
-
----
-
-## 🚀 Fonctionnalités
-
-- 🔎 Recherche d’offres d’alternance via **Google Custom Search API**
-- 🧠 Analyse des offres avec **Mistral AI** (note /10 + explication)
-- 📄 Import et sélection de **CV personnalisés** pour le scoring
-- 📊 Suivi des candidatures dans un **tableau interactif**
-- 🧹 Interface HTML avec **CSS personnalisée** et formulaire intuitif
-- 🔗 Gestion des liens d’offres extraites depuis des pages listes (Indeed, WTTJ...)
+**Candidature Assist** est une application web Python conçue pour faciliter la recherche d'alternance, l'analyse automatique de la pertinence d’une offre avec un CV, et le suivi des candidatures via une interface simple et interactive.
 
 ---
 
-## 📦 Technologies
+## 🚀 Fonctionnalités principales
 
-- Python 3 + Flask
-- HTML / CSS
-- SQLite
-- Google Custom Search API
-- Mistral Chat API
-- BeautifulSoup (scraping HTML)
-- Requests
+- 🔎 **Recherche automatisée** d’offres d’alternance par mots-clés
+- 📄 **Upload sécurisé de CV**, utilisés comme contexte pour un scoring LLM
+- 🤖 **Évaluation de compatibilité** entre une offre et le CV sélectionné grâce à l’API **Mistral**
+- 📊 **Tableau de suivi des candidatures** (dates, entreprises, retours, commentaires…)
+- 🛡️ **Sécurité avancée** : protection CSRF, filtrage des uploads, entêtes HTTP sécurisés
 
 ---
 
-## 🧪 Configuration requise
+## 🛠️ Stack technique
 
-- Python 3.10 ou supérieur
-- Un fichier `.env` contenant vos clés :
+- Python 3.11+
+- Flask (avec Blueprints)
+- Flask-WTF pour la gestion des formulaires sécurisés
+- Flask-Talisman pour les headers CSP / sécurité HTTP
+- Mistral API (via requêtes HTTP)
+- SQLite (persistant)
+- HTML/CSS, JavaScript (fetch, AJAX)
 
-```env
-api_key=VOTRE_GOOGLE_API_KEY
-search_engine_id=VOTRE_CSE_ID
-MISTRAL_API_KEY=VOTRE_MISTRAL_KEY
-FLASK_SECRET_KEY=cle-secrete
+---
+
+## 🔒 Sécurité
+
+- ✅ Protection CSRF sur tous les formulaires (`Flask-WTF`)
+- ✅ Restrictions sur les fichiers uploadés (PDF/DOC/DOCX, max 2 Mo)
+- ✅ Sécurisation HTTP avec `Flask-Talisman` (CSP, nosniff, X-Frame, etc.)
+- ✅ Variables d’environnement via `.env` (**jamais pushé**), modèle fourni dans `.env.exemple`
+
+
+---
+
+## 📁 Structure du projet
+
+```
+candidature-assist/
+├── app.py                   # Point d’entrée Flask
+├── recherche/               # Logique de recherche et API Mistral
+├── gestion/                 # Upload de CV, tableau de suivi
+├── templates/               # Pages HTML (Jinja2)
+├── static/                  # CSS / JavaScript
+├── uploads/                 # Fichiers utilisateur
+├── .env.exemple             # Modèle de configuration (à copier)
+├── requirements.txt         # Dépendances du projet
+└── tests.py                 # Tests fonctionnels
 ```
 
 ---
 
-## ▶️ Lancer le projet
+## ⚙️ Installation locale (dev)
 
 ```bash
-# (Optionnel) Créer un environnement virtuel
-python -m venv venv
-source venv/bin/activate  # ou .\venv\Scripts\activate sous Windows
+git clone https://github.com/JulienDrx/candidature-assist.git
+cd candidature-assist
 
-# Installer les dépendances
+python -m venv venv
+source venv/bin/activate         # ou venv\Scripts\activate sous Windows
 pip install -r requirements.txt
 
-# Lancer l'application Flask
-python app.py
+cp .env.exemple .env             # puis configure ta clé Mistral etc.
+flask run
 ```
 
 ---
 
-## 🗂 Arborescence du projet
+## 🧠 API Mistral
 
-```
-.
-├── app.py
-├── creer_bdd.py
-├── .env
-├── .gitignore
-├── requirements.txt
-├── templates/
-│   ├── index.html
-│   ├── tableau.html
-│   ├── modifier.html
-│   └── liste_cv.html
-├── static/
-│   └── style.css
-├── gestion/
-│   └── routes.py
-├── recherche/
-│   ├── routes.py
-│   └── scraping.py
-```
+Le CV uploadé est injecté dans un prompt vers l’API **Mistral**, qui renvoie un score de compatibilité (sur 10) avec chaque offre détectée.  
+Ce score est affiché avec une **explication générée automatiquement**.
 
 ---
 
-## 📝 Améliorations possibles
+## 📦 À venir
 
-- Tri des offres par score Mistral
-- Intégration Bootstrap ou Tailwind pour un style pro
-- Historique des analyses ou versionnage des candidatures
-- Export CSV des candidatures
+- Authentification utilisateur
+- Export Excel / CSV
+- Mode multi-CV + notation comparative
+- Déploiement sur Render ou Railway
 
 ---
 
-## 🤝 Contribuer
+## 👤 Auteur
 
-N'hésitez pas à forker ce projet, proposer une pull request ou poser une question !
+**Julien Drieux**  
+🔗 [LinkedIn](https://www.linkedin.com/in/julien-drieux)
 
 ---
 
 ## 📜 Licence
 
-Projet personnel à visée pédagogique.
+Projet open-source sous licence Apache 2.0.
