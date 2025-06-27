@@ -20,10 +20,11 @@
         {% endfor %}
     </select>
 
+    
+
     <button type="submit">Rechercher</button>
 </form>
 
-    </form>
 
     <form action="{{ url_for('gestion.tableau') }}">
         <button type="submit">Aller au tableau de suivi</button>
@@ -70,7 +71,8 @@ function analyserOffre(index, description, link) {
     fetch("/score_offre", {
         method: "POST",
         headers: { "Content-Type": "application/json",
-            "X-Requested-With" : "XMLHttpRequest"
+            "X-Requested-With" : "XMLHttpRequest",
+            "X-CSRFToken": "{{ csrf_token() }}"
          },
         body: JSON.stringify({ link: link, cv })
     })

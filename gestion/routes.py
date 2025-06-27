@@ -51,7 +51,7 @@ creer_table_si_absente(db_path)
 
 
 
-    
+
     
 @gestion_bp.route("/tableau", methods=["GET", "POST"])
 def tableau():
@@ -82,6 +82,7 @@ def tableau():
     tableau = cur.fetchall()
     con.close()
     return render_template("tableau.html", tableau=tableau)
+
 
 
 

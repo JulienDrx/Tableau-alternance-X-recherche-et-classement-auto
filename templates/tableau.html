@@ -56,6 +56,7 @@
                 <td><a href="{{ url_for('gestion.modifier', id=ligne[0]) }}">Modifier</a></td>
                 <td>
                     <form action="{{ url_for('gestion.supprimer', id=ligne[0]) }}" method="post" style="display:inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" onclick="return confirm('Confirmer la suppression ?')">Supprimer</button>
                     </form>
                 </td>
@@ -80,6 +81,7 @@
         <input type="date" name="date_candidature"><br>
         <input type="text" name="retour_oui_ou_non" placeholder="Retour ? (oui/non)"><br>
         <input type="date" name="date_de_retour"><br>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <textarea name="commentaire" placeholder="Commentaire"></textarea><br>
         <button type="submit">Ajouter</button>
     </form>
@@ -96,7 +98,8 @@ document.addEventListener("DOMContentLoaded", function () {
             fetch("{{ url_for('gestion.upload_cv') }}", {
                 method: "POST",
                 headers: {
-                    "X-Requested-With": "XMLHttpRequest"
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": "{{ csrf_token() }}"
                 },
                 body: formData
             })
